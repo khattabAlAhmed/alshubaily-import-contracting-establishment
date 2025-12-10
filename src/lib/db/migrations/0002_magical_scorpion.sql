@@ -1,0 +1,2 @@
+ALTER TABLE "university" ADD COLUMN "country_id" text NOT NULL;--> statement-breakpoint
+ALTER TABLE "university" ADD CONSTRAINT "university_country_id_country_id_fk" FOREIGN KEY ("country_id") REFERENCES "public"."country"("id") ON DELETE cascade ON UPDATE no action;

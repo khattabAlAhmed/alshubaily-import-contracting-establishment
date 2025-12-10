@@ -1,0 +1,126 @@
+{
+    "HomePage": {
+        "title": "تطبيقي",
+        "welcome": "مرحباً بك في تطبيقنا!"
+    },
+    "HeroSection": {
+        "slides": {
+            "welcome": {
+                "title": "مرحباً بك في منصتنا",
+                "caption": "أنشئ تطبيقات رائعة باستخدام قالب البداية الخاص بنا"
+            },
+            "features": {
+                "title": "تقنيات حديثة",
+                "caption": "مبني باستخدام Next.js و TypeScript و Tailwind CSS"
+            }
+        },
+        "buttons": {
+            "getStarted": "ابدأ الآن",
+            "learnMore": "اعرف المزيد"
+        }
+    },
+    "Footer": {
+        "copyright": "© 2025 تطبيقي. جميع الحقوق محفوظة.",
+        "bottomLinks": {
+            "privacy": "سياسة الخصوصية",
+            "terms": "شروط الاستخدام"
+        }
+    },
+    "LanguageSwitch": {
+        "switchToArabic": "التبديل إلى العربية",
+        "switchToEnglish": "التبديل إلى الإنجليزية"
+    },
+    "navItems": {
+        "home": "الرئيسية",
+        "about": "من نحن",
+        "contact": "تواصل معنا"
+    },
+    "LoginForm": {
+        "welcomeBack": "مرحباً بعودتك",
+        "loginWithSocial": "سجل الدخول باستخدام حساب Google",
+        "loginWithGoogle": "سجل الدخول باستخدام Google",
+        "orContinueWith": "أو تابع باستخدام",
+        "email": "البريد الإلكتروني",
+        "emailPlaceholder": "m@example.com",
+        "password": "كلمة المرور",
+        "passwordPlaceholder": "********",
+        "login": "تسجيل الدخول",
+        "noAccount": "ليس لديك حساب؟",
+        "signUpLink": "سجل الآن",
+        "termsAndPrivacy": "بالنقر على متابعة، فإنك توافق على شروط الخدمة وسياسة الخصوصية الخاصة بنا.",
+        "loginSuccess": "تسجيل الدخول بنجاح",
+        "loginWithGoogleSuccess": "تسجيل الدخول باستخدام Google بنجاح"
+    },
+    "SignupForm": {
+        "createAccount": "إنشاء حسابك",
+        "enterEmailBelow": "أدخل بريدك الإلكتروني أدناه لإنشاء حسابك",
+        "fullName": "الاسم الكامل",
+        "namePlaceholder": "أحمد محمد",
+        "email": "البريد الإلكتروني",
+        "emailPlaceholder": "m@example.com",
+        "password": "كلمة المرور",
+        "passwordPlaceholder": "********",
+        "createAccountButton": "إنشاء الحساب",
+        "alreadyHaveAccount": "لديك حساب بالفعل؟",
+        "loginLink": "سجل الدخول",
+        "termsAndPrivacy": "بالنقر على متابعة، فإنك توافق على شروط الخدمة وسياسة الخصوصية الخاصة بنا.",
+        "signupSuccess": "تم إنشاء الحساب بنجاح",
+        "orContinueWith": "أو تابع باستخدام",
+        "signupWithGoogle": "تسجيل الدخول باستخدام Google"
+    },
+    "AuthError": {
+        "USER_NOT_FOUND": "المستخدم غير موجود",
+        "FAILED_TO_CREATE_USER": "فشل إنشاء المستخدم",
+        "FAILED_TO_CREATE_SESSION": "فشل إنشاء الجلسة",
+        "FAILED_TO_UPDATE_USER": "فشل تحديث المستخدم",
+        "FAILED_TO_GET_SESSION": "فشل الحصول على الجلسة",
+        "INVALID_PASSWORD": "كلمة المرور غير صحيحة",
+        "INVALID_EMAIL": "البريد الإلكتروني غير صحيح",
+        "INVALID_EMAIL_OR_PASSWORD": "البريد الإلكتروني أو كلمة المرور غير صحيحة",
+        "SOCIAL_ACCOUNT_ALREADY_LINKED": "الحساب الاجتماعي مرتبط بالفعل",
+        "PROVIDER_NOT_FOUND": "الموفر غير موجود",
+        "INVALID_TOKEN": "الرمز غير صحيح",
+        "ID_TOKEN_NOT_SUPPORTED": "الرمز المعرف غير مدعوم",
+        "FAILED_TO_GET_USER_INFO": "فشل الحصول على معلومات المستخدم",
+        "USER_EMAIL_NOT_FOUND": "البريد الإلكتروني غير موجود",
+        "EMAIL_NOT_VERIFIED": "البريد الإلكتروني غير مؤكد",
+        "PASSWORD_TOO_SHORT": "كلمة المرور طويلة جدا",
+        "PASSWORD_TOO_LONG": "كلمة المرور قصيرة جدا",
+        "USER_ALREADY_EXISTS": "المستخدم موجود بالفعل",
+        "EMAIL_CAN_NOT_BE_UPDATED": "البريد الإلكتروني لا يمكن تحديثه",
+        "CREDENTIAL_ACCOUNT_NOT_FOUND": "الحساب الموثوق به غير موجود",
+        "SESSION_EXPIRED": "الجلسة غير موجودة",
+        "FAILED_TO_UNLINK_LAST_ACCOUNT": "فشل إلغاء الربط الأخير",
+        "ACCOUNT_NOT_FOUND": "الحساب غير موجود",
+        "USER_ALREADY_HAS_PASSWORD": "المستخدم لديه كلمة مرور بالفعل",
+        "USER_ALREADY_EXISTS_USE_ANOTHER_EMAIL": "المستخدم موجود بالفعل. استخدم بريد إلكتروني آخر."
+    },
+    "Auth": {
+        "SignIn": {
+            "title": "تسجيل الدخول - تطبيقي"
+        },
+        "SignUp": {
+            "title": "تسجيل حساب - تطبيقي"
+        },
+        "SignOut": {
+            "button": "تسجيل الخروج"
+        }
+    },
+    "dashboard": {
+        "sidebar": {
+            "title": "لوحة التحكم",
+            "home": "الرئيسية"
+        },
+        "home": {
+            "title": "مرحباً بك في لوحة التحكم",
+            "subtitle": "إدارة تطبيقك من هنا"
+        },
+        "itemsPage": {
+            "title": "العناصر",
+            "subtitle": "إدارة العناصر في النظام",
+            "loadMore": "تحميل المزيد",
+            "loading": "جاري التحميل...",
+            "noItems": "لا توجد عناصر"
+        }
+    }
+}
