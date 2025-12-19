@@ -6,3 +6,4 @@ export { DeleteDialog } from "./DeleteDialog";
 export { BilingualInput } from "./BilingualInput";
 export { EmptyState } from "./EmptyState";
 export { StatusBadge } from "./StatusBadge";
+export { ImageUpload } from "./ImageUpload";
