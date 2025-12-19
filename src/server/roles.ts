@@ -228,3 +228,26 @@ export async function getAllPermissions(): Promise<UserPermission[]> {
 
     return allPermissions;
 }
+
+/**
+ * Update permissions for a role
+ */
+export async function updateRolePermissions(
+    roleId: string,
+    permissionIds: string[]
+): Promise<{ success: boolean; message: string }> {
+    try {
+        // Delete existing permissions for this role
+        await db.delete(rolePermissions).where(eq(rolePermissions.roleId, roleId));
+
+        // Add new permissions
+        for (const permissionId of permissionIds) {
+            await db.insert(rolePermissions).values({ roleId, permissionId }).onConflictDoNothing();
+        }
+
+        return { success: true, message: "Permissions updated successfully" };
+    } catch (error) {
+        console.error("Error updating role permissions:", error);
+        return { success: false, message: "Failed to update permissions" };
+    }
+}

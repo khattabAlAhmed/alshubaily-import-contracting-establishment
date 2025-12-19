@@ -12,6 +12,9 @@ export default async function RolesPage() {
         redirect("/dashboard");
     }
 
+    // Check if user can manage (edit) roles
+    const canManage = await hasPermission("roles.manage");
+
     const roles = await getAllRoles();
     const permissions = await getAllPermissions();
 
@@ -30,6 +33,7 @@ export default async function RolesPage() {
                 description: t("description"),
                 noRoles: t("noRoles"),
             }}
+            canManage={canManage}
         />
     );
 }
