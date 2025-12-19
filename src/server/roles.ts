@@ -175,16 +175,40 @@ export async function getUserPermissions(): Promise<UserPermission[]> {
 
 /**
  * Check if the current user has a specific permission
+ * Admin users always have all permissions
  */
 export async function hasPermission(permissionKey: string): Promise<boolean> {
+    const userData = await getCurrentUserWithRoles();
+
+    if (!userData || !userData.account) {
+        return false;
+    }
+
+    // Admins have all permissions
+    if (userData.roles.some(r => r.id === "role_admin")) {
+        return true;
+    }
+
     const userPermissions = await getUserPermissions();
     return userPermissions.some(p => p.key === permissionKey);
 }
 
 /**
  * Check if user has any of the specified permissions
+ * Admin users always have all permissions
  */
 export async function checkAccess(permissionKeys: string[]): Promise<boolean> {
+    const userData = await getCurrentUserWithRoles();
+
+    if (!userData || !userData.account) {
+        return false;
+    }
+
+    // Admins have all permissions
+    if (userData.roles.some(r => r.id === "role_admin")) {
+        return true;
+    }
+
     const userPermissions = await getUserPermissions();
     return userPermissions.some(p => permissionKeys.includes(p.key));
 }
