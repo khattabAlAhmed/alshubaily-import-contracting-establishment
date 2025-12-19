@@ -113,6 +113,12 @@
             "noEmail": "Didn't receive the email?",
             "tryAgain": "Try signing up again",
             "backToSignIn": "Back to Sign In"
+        },
+        "AccessDenied": {
+            "title": "Access Denied",
+            "description": "You don't have permission to access the dashboard.",
+            "contactAdmin": "Please contact an administrator to request access.",
+            "backToHome": "Back to Home"
         }
     },
     "dashboard": {
