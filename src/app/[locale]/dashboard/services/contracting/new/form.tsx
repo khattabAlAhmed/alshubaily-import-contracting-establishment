@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useLocale } from "next-intl";
 import { useRouter } from "next/navigation";
-import { PageHeader, MultiSelectCreatable } from "@/components/dashboard/ui";
+import { PageHeader, MultiSelectCreatable, ImageSelectOrUpload } from "@/components/dashboard/ui";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -69,6 +69,7 @@ export function ContractingServiceForm({ mode, existingService, lookups }: Contr
         qualitySafetyIds: existingService?.qualitySafety.map(q => q.id) || [],
         whyChooseUsIds: existingService?.whyChooseUs.map(w => w.id) || [],
         faqIds: existingService?.faqs.map(f => f.id) || [],
+        mainImageId: existingService?.mainImageId || null as string | null,
     });
 
     const [dynamicLookups, setDynamicLookups] = useState(lookups);
@@ -196,6 +197,14 @@ export function ContractingServiceForm({ mode, existingService, lookups }: Contr
                         </div>
                     </CardContent>
                 </Card>
+
+                {/* Main Image */}
+                <ImageSelectOrUpload
+                    selectedImageId={formData.mainImageId}
+                    onSelect={(imageId) => setFormData({ ...formData, mainImageId: imageId })}
+                    labelEn="Main Image"
+                    labelAr="الصورة الرئيسية"
+                />
 
                 {/* Projects */}
                 <Card>

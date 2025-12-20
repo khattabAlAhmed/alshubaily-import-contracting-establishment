@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useLocale } from "next-intl";
 import { useRouter } from "next/navigation";
-import { PageHeader, MultiSelectCreatable } from "@/components/dashboard/ui";
+import { PageHeader, MultiSelectCreatable, ImageSelectOrUpload } from "@/components/dashboard/ui";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -206,6 +206,14 @@ export function ImportServiceForm({ mode, existingService, lookups }: ImportServ
                         </div>
                     </CardContent>
                 </Card>
+
+                {/* Main Image */}
+                <ImageSelectOrUpload
+                    selectedImageId={formData.mainImageId}
+                    onSelect={(imageId) => setFormData({ ...formData, mainImageId: imageId })}
+                    labelEn="Main Image"
+                    labelAr="الصورة الرئيسية"
+                />
 
                 {/* Countries & Suppliers */}
                 <Card>

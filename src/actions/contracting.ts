@@ -123,6 +123,7 @@ export async function createContractingService(data: {
     whenNeededAr?: string;
     slugEn: string;
     slugAr: string;
+    mainImageId?: string | null;
     projectIds: string[];
     includedWorkIds: string[];
     excludedWorkIds: string[];
@@ -147,6 +148,7 @@ export async function createContractingService(data: {
             whenNeededAr: data.whenNeededAr || null,
             slugEn: data.slugEn,
             slugAr: data.slugAr,
+            mainImageId: data.mainImageId || null,
             mainServiceId: "service_contracting",
         });
 
@@ -198,6 +200,7 @@ export async function updateContractingService(
         whenNeededAr?: string;
         slugEn: string;
         slugAr: string;
+        mainImageId?: string | null;
         projectIds: string[];
         includedWorkIds: string[];
         excludedWorkIds: string[];
@@ -220,6 +223,7 @@ export async function updateContractingService(
             whenNeededAr: data.whenNeededAr || null,
             slugEn: data.slugEn,
             slugAr: data.slugAr,
+            mainImageId: data.mainImageId || null,
         }).where(eq(contractingServices.id, id));
 
         // Delete existing junctions
