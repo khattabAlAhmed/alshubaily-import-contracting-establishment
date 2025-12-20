@@ -12,7 +12,10 @@
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
     "db:seed": "tsx scripts/seed-permissions.ts",
-    "db:seed:roles": "tsx scripts/seed-roles.ts"
+    "db:seed:roles": "tsx scripts/seed-roles.ts",
+    "db:seed:property-categories": "tsx src/scripts/seed-property-categories.ts",
+    "db:seed:properties": "tsx src/scripts/seed-properties.ts",
+    "db:seed:products": "tsx src/scripts/seed-products.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

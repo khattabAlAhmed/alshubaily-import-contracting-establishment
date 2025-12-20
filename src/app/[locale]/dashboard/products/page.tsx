@@ -1,10 +1,7 @@
-import { getTranslations } from "next-intl/server";
 import { redirect } from "next/navigation";
 import { hasPermission } from "@/server/roles";
-import { PageHeader, EmptyState } from "@/components/dashboard/ui";
-import { Button } from "@/components/ui/button";
-import { Package, Plus } from "lucide-react";
-import Link from "next/link";
+import { getAllProducts, getAllProductCategories } from "@/actions/products";
+import ProductsClient from "./client";
 
 export default async function ProductsPage() {
     const canView = await hasPermission("products.view");
@@ -12,34 +9,10 @@ export default async function ProductsPage() {
         redirect("/dashboard");
     }
 
-    const t = await getTranslations("dashboard.products");
+    const [productsList, categories] = await Promise.all([
+        getAllProducts(),
+        getAllProductCategories(),
+    ]);
 
-    return (
-        <>
-            <PageHeader
-                titleEn="Products"
-                titleAr="المنتجات"
-                descriptionEn="Manage products catalog"
-                descriptionAr="إدارة كتالوج المنتجات"
-                actionLabel={t("addProduct")}
-                actionHref="/dashboard/products/new"
-            />
-
-            <EmptyState
-                titleEn="No products yet"
-                titleAr="لا توجد منتجات بعد"
-                descriptionEn="Add your first product to build your catalog"
-                descriptionAr="أضف أول منتج لبناء كتالوجك"
-                icon={<Package className="h-8 w-8 text-muted-foreground" />}
-                action={
-                    <Button asChild>
-                        <Link href="/dashboard/products/new">
-                            <Plus className="mr-2 h-4 w-4 rtl:ml-2 rtl:mr-0" />
-                            {t("addProduct")}
-                        </Link>
-                    </Button>
-                }
-            />
-        </>
-    );
+    return <ProductsClient products={productsList} categories={categories} />;
 }

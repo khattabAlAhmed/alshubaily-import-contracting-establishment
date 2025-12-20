@@ -10,3 +10,4 @@ export { ImageUpload } from "./ImageUpload";
 export { LookupPageClient } from "./LookupPageClient";
 export { MultiSelectCreatable } from "./MultiSelectCreatable";
 export { ImageSelectOrUpload } from "./ImageSelectOrUpload";
+export { MultiImageSelectOrUpload } from "./MultiImageSelectOrUpload";
