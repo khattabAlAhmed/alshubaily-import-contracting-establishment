@@ -1,6 +1,6 @@
 import { redirect, notFound } from "next/navigation";
-import { hasPermission } from "@/server/roles";
-import { getArticleById, getAllArticleCategories, getAllAuthors } from "@/actions/articles";
+import { hasPermission, isAdmin } from "@/server/roles";
+import { getArticleById, getAllArticleCategories, getAllAuthors, getCurrentUserAuthor } from "@/actions/articles";
 import ArticleForm from "../new/form";
 
 type EditArticlePageProps = {
@@ -15,10 +15,12 @@ export default async function EditArticlePage({ params }: EditArticlePageProps) 
 
     const { id } = await params;
 
-    const [article, categories, authors] = await Promise.all([
+    const [article, categories, authors, userIsAdmin, currentUserAuthor] = await Promise.all([
         getArticleById(id),
         getAllArticleCategories(),
         getAllAuthors(),
+        isAdmin(),
+        getCurrentUserAuthor(),
     ]);
 
     if (!article) {
@@ -31,6 +33,8 @@ export default async function EditArticlePage({ params }: EditArticlePageProps) 
             existingArticle={article}
             categories={categories}
             authors={authors}
+            isAdmin={userIsAdmin}
+            currentAuthorId={currentUserAuthor.authorId}
         />
     );
 }

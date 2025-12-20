@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocale } from "next-intl";
 import { useRouter } from "next/navigation";
 import {
@@ -13,6 +13,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
     Select,
     SelectContent,
@@ -20,11 +21,19 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import { Loader2, Save } from "lucide-react";
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogFooter,
+} from "@/components/ui/dialog";
+import { Loader2, Save, Plus } from "lucide-react";
 import { toast } from "sonner";
 import {
     createArticle,
     updateArticle,
+    createArticleCategory,
     type ArticleWithRelations,
     type ArticleCategory,
     type Author,
@@ -35,17 +44,38 @@ type ArticleFormProps = {
     existingArticle?: ArticleWithRelations;
     categories: ArticleCategory[];
     authors: Author[];
+    isAdmin: boolean;
+    currentAuthorId: string | null;
 };
 
 export default function ArticleForm({
     mode,
     existingArticle,
-    categories,
+    categories: initialCategories,
     authors,
+    isAdmin,
+    currentAuthorId,
 }: ArticleFormProps) {
     const locale = useLocale();
     const router = useRouter();
     const [isSaving, setIsSaving] = useState(false);
+    const [categories, setCategories] = useState(initialCategories);
+
+    // Category creation dialog
+    const [categoryDialogOpen, setCategoryDialogOpen] = useState(false);
+    const [newCategory, setNewCategory] = useState({ titleEn: "", titleAr: "" });
+    const [isCreatingCategory, setIsCreatingCategory] = useState(false);
+
+    // Determine the author ID to use
+    const getInitialAuthorId = () => {
+        if (existingArticle?.authorId) {
+            return existingArticle.authorId;
+        }
+        if (!isAdmin && currentAuthorId) {
+            return currentAuthorId;
+        }
+        return "";
+    };
 
     const [formData, setFormData] = useState({
         titleEn: existingArticle?.titleEn || "",
@@ -53,12 +83,20 @@ export default function ArticleForm({
         slugEn: existingArticle?.slugEn || "",
         slugAr: existingArticle?.slugAr || "",
         categoryId: existingArticle?.categoryId || "",
-        authorId: existingArticle?.authorId || "",
+        authorId: getInitialAuthorId(),
         mainImageId: existingArticle?.mainImageId || null as string | null,
         imageIds: existingArticle?.images.map((img) => img.id) || ([] as string[]),
         contentEn: existingArticle?.richContent?.contentEn || "",
         contentAr: existingArticle?.richContent?.contentAr || "",
+        publishNow: mode === "create" ? true : !!existingArticle?.publishedAt,
     });
+
+    // For non-admin authors, ensure authorId is set
+    useEffect(() => {
+        if (!isAdmin && currentAuthorId && !formData.authorId) {
+            setFormData(prev => ({ ...prev, authorId: currentAuthorId }));
+        }
+    }, [isAdmin, currentAuthorId, formData.authorId]);
 
     const generateSlug = (title: string, isArabic: boolean) => {
         if (isArabic) {
@@ -69,6 +107,50 @@ export default function ArticleForm({
             .trim()
             .replace(/\s+/g, "-")
             .replace(/[^a-z0-9-]/g, "");
+    };
+
+    const handleCreateCategory = async () => {
+        if (!newCategory.titleEn || !newCategory.titleAr) {
+            toast.error(locale === "ar" ? "يرجى ملء الحقول المطلوبة" : "Please fill required fields");
+            return;
+        }
+
+        setIsCreatingCategory(true);
+
+        const slugEn = generateSlug(newCategory.titleEn, false);
+        const slugAr = generateSlug(newCategory.titleAr, true);
+
+        const result = await createArticleCategory({
+            titleEn: newCategory.titleEn,
+            titleAr: newCategory.titleAr,
+            slugEn,
+            slugAr,
+        });
+
+        setIsCreatingCategory(false);
+
+        if (result.success && result.id) {
+            toast.success(locale === "ar" ? "تم إنشاء التصنيف" : "Category created");
+            // Add to local categories list and select it
+            const newCat: ArticleCategory = {
+                id: result.id,
+                titleEn: newCategory.titleEn,
+                titleAr: newCategory.titleAr,
+                slugEn,
+                slugAr,
+                imageId: null,
+                descriptionEn: null,
+                descriptionAr: null,
+                createdAt: new Date(),
+                updatedAt: new Date(),
+            };
+            setCategories(prev => [...prev, newCat]);
+            setFormData(prev => ({ ...prev, categoryId: result.id! }));
+            setCategoryDialogOpen(false);
+            setNewCategory({ titleEn: "", titleAr: "" });
+        } else {
+            toast.error(result.message);
+        }
     };
 
     const handleSave = async () => {
@@ -86,6 +168,11 @@ export default function ArticleForm({
             return;
         }
 
+        // Determine the author ID to save
+        const authorIdToSave = isAdmin
+            ? (formData.authorId || null)
+            : (currentAuthorId || null);
+
         setIsSaving(true);
 
         let result;
@@ -93,13 +180,15 @@ export default function ArticleForm({
             result = await createArticle({
                 ...formData,
                 categoryId: formData.categoryId || null,
-                authorId: formData.authorId || null,
+                authorId: authorIdToSave,
+                publishedAt: formData.publishNow ? new Date() : null,
             });
         } else if (existingArticle) {
             result = await updateArticle(existingArticle.id, {
                 ...formData,
                 categoryId: formData.categoryId || null,
-                authorId: formData.authorId || null,
+                authorId: authorIdToSave,
+                publishedAt: formData.publishNow ? (existingArticle.publishedAt || new Date()) : null,
             });
         }
 
@@ -113,6 +202,9 @@ export default function ArticleForm({
             toast.error(result?.message || "Failed to save");
         }
     };
+
+    // Get the current author's name (for display when non-admin)
+    const currentAuthorName = authors.find(a => a.id === currentAuthorId);
 
     return (
         <>
@@ -207,56 +299,100 @@ export default function ArticleForm({
                             </div>
                         </div>
                         <div className="grid gap-4 md:grid-cols-2">
+                            {/* Category with create option */}
                             <div className="space-y-2">
                                 <Label>{locale === "ar" ? "التصنيف" : "Category"}</Label>
-                                <Select
-                                    value={formData.categoryId}
-                                    onValueChange={(value) =>
-                                        setFormData({ ...formData, categoryId: value })
-                                    }
-                                >
-                                    <SelectTrigger>
-                                        <SelectValue
-                                            placeholder={
-                                                locale === "ar" ? "اختر تصنيف" : "Select category"
-                                            }
-                                        />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {categories.map((cat) => (
-                                            <SelectItem key={cat.id} value={cat.id}>
-                                                {locale === "ar" ? cat.titleAr : cat.titleEn}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
+                                <div className="flex gap-2">
+                                    <Select
+                                        value={formData.categoryId}
+                                        onValueChange={(value) =>
+                                            setFormData({ ...formData, categoryId: value })
+                                        }
+                                    >
+                                        <SelectTrigger className="flex-1">
+                                            <SelectValue
+                                                placeholder={
+                                                    locale === "ar" ? "اختر تصنيف" : "Select category"
+                                                }
+                                            />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {categories.map((cat) => (
+                                                <SelectItem key={cat.id} value={cat.id}>
+                                                    {locale === "ar" ? cat.titleAr : cat.titleEn}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        size="icon"
+                                        onClick={() => setCategoryDialogOpen(true)}
+                                        title={locale === "ar" ? "إضافة تصنيف" : "Add category"}
+                                    >
+                                        <Plus className="h-4 w-4" />
+                                    </Button>
+                                </div>
                             </div>
-                            <div className="space-y-2">
-                                <Label>{locale === "ar" ? "الكاتب" : "Author"}</Label>
-                                <Select
-                                    value={formData.authorId}
-                                    onValueChange={(value) =>
-                                        setFormData({ ...formData, authorId: value })
-                                    }
-                                >
-                                    <SelectTrigger>
-                                        <SelectValue
-                                            placeholder={
-                                                locale === "ar" ? "اختر الكاتب" : "Select author"
-                                            }
-                                        />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {authors.map((author) => (
-                                            <SelectItem key={author.id} value={author.id}>
-                                                {locale === "ar"
-                                                    ? author.publicNameAr
-                                                    : author.publicNameEn}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                            </div>
+
+                            {/* Author field - only show for admins */}
+                            {isAdmin ? (
+                                <div className="space-y-2">
+                                    <Label>{locale === "ar" ? "الكاتب" : "Author"}</Label>
+                                    <Select
+                                        value={formData.authorId}
+                                        onValueChange={(value) =>
+                                            setFormData({ ...formData, authorId: value })
+                                        }
+                                    >
+                                        <SelectTrigger>
+                                            <SelectValue
+                                                placeholder={
+                                                    locale === "ar" ? "اختر الكاتب" : "Select author"
+                                                }
+                                            />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {authors.map((author) => (
+                                                <SelectItem key={author.id} value={author.id}>
+                                                    {locale === "ar"
+                                                        ? author.publicNameAr
+                                                        : author.publicNameEn}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                            ) : currentAuthorName ? (
+                                <div className="space-y-2">
+                                    <Label>{locale === "ar" ? "الكاتب" : "Author"}</Label>
+                                    <Input
+                                        value={locale === "ar" ? currentAuthorName.publicNameAr : currentAuthorName.publicNameEn}
+                                        disabled
+                                        className="bg-muted"
+                                    />
+                                    <p className="text-xs text-muted-foreground">
+                                        {locale === "ar"
+                                            ? "يتم تعيين الكاتب تلقائيًا"
+                                            : "Author is automatically assigned"}
+                                    </p>
+                                </div>
+                            ) : null}
+                        </div>
+
+                        {/* Publish Now checkbox */}
+                        <div className="flex items-center space-x-2 rtl:space-x-reverse">
+                            <Checkbox
+                                id="publishNow"
+                                checked={formData.publishNow}
+                                onCheckedChange={(checked) =>
+                                    setFormData({ ...formData, publishNow: !!checked })
+                                }
+                            />
+                            <Label htmlFor="publishNow" className="cursor-pointer">
+                                {locale === "ar" ? "نشر المقال الآن" : "Publish article now"}
+                            </Label>
                         </div>
                     </CardContent>
                 </Card>
@@ -299,6 +435,46 @@ export default function ArticleForm({
                     </Button>
                 </div>
             </div>
+
+            {/* Category Creation Dialog */}
+            <Dialog open={categoryDialogOpen} onOpenChange={setCategoryDialogOpen}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>
+                            {locale === "ar" ? "إضافة تصنيف جديد" : "Add New Category"}
+                        </DialogTitle>
+                    </DialogHeader>
+                    <div className="space-y-4">
+                        <div className="space-y-2">
+                            <Label>{locale === "ar" ? "الاسم (انجليزي) *" : "Name (English) *"}</Label>
+                            <Input
+                                value={newCategory.titleEn}
+                                onChange={(e) => setNewCategory({ ...newCategory, titleEn: e.target.value })}
+                                dir="ltr"
+                                placeholder="Category name"
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <Label>{locale === "ar" ? "الاسم (عربي) *" : "Name (Arabic) *"}</Label>
+                            <Input
+                                value={newCategory.titleAr}
+                                onChange={(e) => setNewCategory({ ...newCategory, titleAr: e.target.value })}
+                                dir="rtl"
+                                placeholder="اسم التصنيف"
+                            />
+                        </div>
+                    </div>
+                    <DialogFooter>
+                        <Button variant="outline" onClick={() => setCategoryDialogOpen(false)}>
+                            {locale === "ar" ? "إلغاء" : "Cancel"}
+                        </Button>
+                        <Button onClick={handleCreateCategory} disabled={isCreatingCategory}>
+                            {isCreatingCategory && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                            {locale === "ar" ? "إضافة" : "Add"}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </>
     );
 }

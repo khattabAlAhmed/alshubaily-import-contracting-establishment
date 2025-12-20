@@ -38,6 +38,31 @@ export type AdminAccount = {
 // Alias for clarity
 export type AuthorAccount = AdminAccount;
 
+// ==================== Current User Author ====================
+
+export async function getCurrentUserAuthor(): Promise<{ authorId: string | null; accountId: string | null }> {
+    // Dynamic import to avoid circular dependencies
+    const { getCurrentUserWithRoles } = await import("@/server/roles");
+
+    const userData = await getCurrentUserWithRoles();
+
+    if (!userData || !userData.account) {
+        return { authorId: null, accountId: null };
+    }
+
+    // Check if this account has an author record
+    const authorResult = await db
+        .select({ id: authors.id })
+        .from(authors)
+        .where(eq(authors.accountId, userData.account.id))
+        .limit(1);
+
+    return {
+        authorId: authorResult.length > 0 ? authorResult[0].id : null,
+        accountId: userData.account.id,
+    };
+}
+
 // ==================== Article Categories ====================
 
 export async function getAllArticleCategories(): Promise<ArticleCategory[]> {

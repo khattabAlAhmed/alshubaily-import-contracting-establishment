@@ -66,13 +66,22 @@ export function DataTable<T>({
     const locale = useLocale();
     const [search, setSearch] = useState("");
 
-    const filteredData = searchable
+    const filteredData = searchable && search.trim() !== ""
         ? data.filter((item) => {
             const searchLower = search.toLowerCase();
+            // Search through rendered column values or direct string properties
             return columns.some((col) => {
+                // Try direct property access first
                 const value = (item as Record<string, unknown>)[col.key as string];
                 if (typeof value === "string") {
                     return value.toLowerCase().includes(searchLower);
+                }
+                // For nested properties, try common patterns
+                const keyStr = col.key as string;
+                if (keyStr === "title") {
+                    const item_ = item as { titleEn?: string; titleAr?: string };
+                    return (item_.titleEn?.toLowerCase().includes(searchLower) ||
+                        item_.titleAr?.toLowerCase().includes(searchLower));
                 }
                 return false;
             });

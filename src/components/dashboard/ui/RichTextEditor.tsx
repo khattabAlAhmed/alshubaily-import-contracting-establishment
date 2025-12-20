@@ -71,16 +71,18 @@ export function RichTextEditor({
                         <TabsTrigger value="en">English</TabsTrigger>
                         <TabsTrigger value="ar">العربية</TabsTrigger>
                     </TabsList>
-                    <TabsContent value="en">
+                    <TabsContent value="en" forceMount className="data-[state=inactive]:hidden">
                         <SingleEditor
+                            key="editor-en"
                             content={contentEn}
                             onChange={onChangeEn}
                             dir="ltr"
                             placeholder="Enter content..."
                         />
                     </TabsContent>
-                    <TabsContent value="ar">
+                    <TabsContent value="ar" forceMount className="data-[state=inactive]:hidden">
                         <SingleEditor
+                            key="editor-ar"
                             content={contentAr}
                             onChange={onChangeAr}
                             dir="rtl"
@@ -92,6 +94,7 @@ export function RichTextEditor({
         </Card>
     );
 }
+
 
 type SingleEditorProps = {
     content: string;

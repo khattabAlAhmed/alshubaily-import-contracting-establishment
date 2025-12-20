@@ -27,6 +27,11 @@ export default function ArticlesClient({ articles, categories, authors }: Articl
     const router = useRouter();
     const [isDeleting, setIsDeleting] = useState<string | null>(null);
 
+    // Debug
+    console.log("ArticlesClient - received articles:", articles.length);
+    console.log("ArticlesClient - articles data:", articles);
+
+
     const handleDelete = async (id: string) => {
         setIsDeleting(id);
         const result = await deleteArticle(id);
@@ -153,6 +158,7 @@ export default function ArticlesClient({ articles, categories, authors }: Articl
                 ))}
             </div>
 
+
             {/* Articles Table */}
             <DataTable
                 data={articles}
@@ -167,3 +173,4 @@ export default function ArticlesClient({ articles, categories, authors }: Articl
         </>
     );
 }
+
