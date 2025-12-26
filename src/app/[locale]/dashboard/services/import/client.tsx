@@ -18,7 +18,8 @@ import {
     ShieldCheck,
     Package,
     ThumbsUp,
-    HelpCircle
+    HelpCircle,
+    Film
 } from "lucide-react";
 import type { ImportService } from "@/actions/import";
 
@@ -27,6 +28,7 @@ type ImportClientProps = {
 };
 
 const quickButtons = [
+    { id: "slides", labelEn: "Slides", labelAr: "الشرائح", href: "/dashboard/services/import/slides", icon: Film },
     { id: "suppliers", labelEn: "Suppliers", labelAr: "الموردين", href: "/dashboard/services/import/suppliers", icon: Factory },
     { id: "beneficiaries", labelEn: "Beneficiaries", labelAr: "المستفيدين", href: "/dashboard/services/import/beneficiaries", icon: Users },
     { id: "usages", labelEn: "Usages", labelAr: "الاستخدامات", href: "/dashboard/services/import/usages", icon: Target },

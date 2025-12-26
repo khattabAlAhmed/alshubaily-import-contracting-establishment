@@ -18,6 +18,7 @@ import {
     ChevronDown,
     ChevronRight,
     Globe,
+    Film,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -65,6 +66,7 @@ const navGroups: NavGroup[] = [
         titleKey: "content",
         collapsible: true,
         items: [
+            { href: '/dashboard/hero-carousel', labelKey: 'heroCarousel', icon: Film, permission: 'hero.view' },
             { href: '/dashboard/projects', labelKey: 'projects', icon: FolderKanban, permission: 'projects.view' },
             { href: '/dashboard/articles', labelKey: 'articles', icon: FileText, permission: 'articles.view' },
             { href: '/dashboard/partners', labelKey: 'partners', icon: Handshake, permission: 'partners.view' },

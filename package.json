@@ -19,7 +19,8 @@
     "db:seed:properties": "tsx src/scripts/seed-properties.ts",
     "db:seed:products": "tsx src/scripts/seed-products.ts",
     "db:seed:projects": "tsx scripts/seed-projects.ts",
-    "db:seed:website-info": "tsx scripts/seed-website-info.ts"
+    "db:seed:website-info": "tsx scripts/seed-website-info.ts",
+    "db:seed:hero": "tsx scripts/seed-hero-permissions.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

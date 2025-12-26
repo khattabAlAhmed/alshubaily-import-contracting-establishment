@@ -16,7 +16,8 @@ import {
     ShieldCheck,
     ThumbsUp,
     HelpCircle,
-    ArrowRight
+    ArrowRight,
+    Film
 } from "lucide-react";
 import type { ContractingService } from "@/actions/contracting";
 
@@ -25,6 +26,7 @@ type ContractingClientProps = {
 };
 
 const quickButtons = [
+    { id: "slides", labelEn: "Slides", labelAr: "الشرائح", href: "/dashboard/services/contracting/slides", icon: Film },
     { id: "works", labelEn: "Works", labelAr: "الأعمال", href: "/dashboard/services/contracting/works", icon: Hammer },
     { id: "materials", labelEn: "Materials", labelAr: "المواد", href: "/dashboard/services/contracting/materials", icon: Layers },
     { id: "techniques", labelEn: "Techniques", labelAr: "التقنيات", href: "/dashboard/services/contracting/techniques", icon: Wrench },
