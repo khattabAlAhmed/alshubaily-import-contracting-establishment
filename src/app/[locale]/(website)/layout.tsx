@@ -8,13 +8,6 @@ type Props = {
     params: Promise<{ locale: string }>;
 };
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-    const { locale } = await params;
-    return {
-        title: "My App",
-        description: "A Next.js starter template with auth, i18n, and dashboard",
-    };
-}
 
 export default function WebsiteLayout({
     children,
