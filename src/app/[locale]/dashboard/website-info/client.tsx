@@ -5,6 +5,7 @@ import Link from "next/link";
 import { PageHeader } from "@/components/dashboard/ui";
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import {
+    Building2,
     Phone,
     Share2,
     Target,
@@ -19,6 +20,14 @@ import {
 } from "lucide-react";
 
 const sections = [
+    {
+        href: "/dashboard/website-info/company-profile",
+        icon: Building2,
+        labelEn: "Company Profile",
+        labelAr: "الملف التعريفي",
+        descEn: "Main company information and branding",
+        descAr: "المعلومات الرئيسية والهوية",
+    },
     {
         href: "/dashboard/website-info/contact",
         icon: Phone,

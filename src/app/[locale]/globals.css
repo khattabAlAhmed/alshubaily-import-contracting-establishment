@@ -84,6 +84,12 @@
   --hero-accent-project: oklch(0.5 0.16 50);
   --hero-gradient-start: oklch(0.1 0 0 / 0%);
   --hero-gradient-end: oklch(0.1 0 0 / 80%);
+
+  /* Section Colors */
+  --section-bg-alt: oklch(0.98 0 0);
+  --section-accent-strength: oklch(0.55 0.2 145);
+  --section-accent-experience: oklch(0.55 0.18 250);
+  --section-accent-commitment: oklch(0.55 0.16 30);
 }
 
 .dark {
@@ -127,6 +133,12 @@
   --hero-accent-project: oklch(0.7 0.16 50);
   --hero-gradient-start: oklch(0.05 0 0 / 0%);
   --hero-gradient-end: oklch(0.05 0 0 / 90%);
+
+  /* Section Colors */
+  --section-bg-alt: oklch(0.18 0 0);
+  --section-accent-strength: oklch(0.7 0.2 145);
+  --section-accent-experience: oklch(0.7 0.18 250);
+  --section-accent-commitment: oklch(0.7 0.16 30);
 }
 
 @layer base {

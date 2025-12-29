@@ -2,6 +2,7 @@
 
 import { db } from "@/lib/db/drizzle";
 import {
+    companyProfile,
     contactInfo,
     socialMediaAccounts,
     organizationGoals,
@@ -14,11 +15,13 @@ import {
     experiences,
     commitments,
 } from "@/lib/db/schema/website-info-schema";
-import { eq } from "drizzle-orm";
+import { images } from "@/lib/db/schema/images-schema";
+import { eq, asc } from "drizzle-orm";
 import { nanoid } from "nanoid";
 
 // ==================== Types ====================
 
+export type CompanyProfile = typeof companyProfile.$inferSelect;
 export type ContactInfo = typeof contactInfo.$inferSelect;
 export type SocialMediaAccount = typeof socialMediaAccounts.$inferSelect;
 export type OrganizationGoal = typeof organizationGoals.$inferSelect;
@@ -30,6 +33,89 @@ export type CompanyValue = typeof companyValues.$inferSelect;
 export type Strength = typeof strengths.$inferSelect;
 export type Experience = typeof experiences.$inferSelect;
 export type Commitment = typeof commitments.$inferSelect;
+
+// ==================== Company Profile ====================
+
+export type CompanyProfileWithImages = CompanyProfile & {
+    logoImageUrl?: string | null;
+    heroImageUrl?: string | null;
+};
+
+export async function getCompanyProfile(): Promise<CompanyProfileWithImages | null> {
+    const result = await db
+        .select({
+            id: companyProfile.id,
+            nameEn: companyProfile.nameEn,
+            nameAr: companyProfile.nameAr,
+            taglineEn: companyProfile.taglineEn,
+            taglineAr: companyProfile.taglineAr,
+            descriptionEn: companyProfile.descriptionEn,
+            descriptionAr: companyProfile.descriptionAr,
+            foundedYear: companyProfile.foundedYear,
+            logoImageId: companyProfile.logoImageId,
+            heroImageId: companyProfile.heroImageId,
+            createdAt: companyProfile.createdAt,
+            updatedAt: companyProfile.updatedAt,
+        })
+        .from(companyProfile)
+        .limit(1);
+
+    if (result.length === 0) return null;
+
+    const profile = result[0];
+
+    // Fetch image URLs
+    let logoImageUrl: string | null = null;
+    let heroImageUrl: string | null = null;
+
+    if (profile.logoImageId) {
+        const logoResult = await db
+            .select({ url: images.url })
+            .from(images)
+            .where(eq(images.id, profile.logoImageId))
+            .limit(1);
+        logoImageUrl = logoResult[0]?.url || null;
+    }
+
+    if (profile.heroImageId) {
+        const heroResult = await db
+            .select({ url: images.url })
+            .from(images)
+            .where(eq(images.id, profile.heroImageId))
+            .limit(1);
+        heroImageUrl = heroResult[0]?.url || null;
+    }
+
+    return { ...profile, logoImageUrl, heroImageUrl };
+}
+
+export async function upsertCompanyProfile(data: {
+    nameEn: string;
+    nameAr: string;
+    taglineEn?: string;
+    taglineAr?: string;
+    descriptionEn?: string;
+    descriptionAr?: string;
+    foundedYear?: number;
+    logoImageId?: string;
+    heroImageId?: string;
+}): Promise<{ success: boolean; message: string; id?: string }> {
+    try {
+        const existing = await db.select({ id: companyProfile.id }).from(companyProfile).limit(1);
+
+        if (existing.length > 0) {
+            await db.update(companyProfile).set(data).where(eq(companyProfile.id, existing[0].id));
+            return { success: true, message: "Company profile updated", id: existing[0].id };
+        } else {
+            const id = nanoid();
+            await db.insert(companyProfile).values({ id, ...data });
+            return { success: true, message: "Company profile created", id };
+        }
+    } catch (error) {
+        console.error("Error upserting company profile:", error);
+        return { success: false, message: "Failed to update company profile" };
+    }
+}
 
 // ==================== Contact Info ====================
 

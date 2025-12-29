@@ -22,6 +22,13 @@
       "when": 1766704791459,
       "tag": "0002_spicy_umar",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1767011008563,
+      "tag": "0003_regular_loners",
+      "breakpoints": true
     }
   ]
 }

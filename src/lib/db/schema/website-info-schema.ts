@@ -1,4 +1,26 @@
-import { pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import { pgTable, text, timestamp, integer } from "drizzle-orm/pg-core";
+import { images } from "./images-schema";
+
+/**
+ * Company Profile - Main info about the establishment
+ */
+export const companyProfile = pgTable("company_profile", {
+    id: text("id").primaryKey(),
+    nameEn: text("name_en").notNull(),
+    nameAr: text("name_ar").notNull(),
+    taglineEn: text("tagline_en"),
+    taglineAr: text("tagline_ar"),
+    descriptionEn: text("description_en"),
+    descriptionAr: text("description_ar"),
+    foundedYear: integer("founded_year"),
+    logoImageId: text("logo_image_id").references(() => images.id, { onDelete: "set null" }),
+    heroImageId: text("hero_image_id").references(() => images.id, { onDelete: "set null" }),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at")
+        .defaultNow()
+        .$onUpdate(() => new Date())
+        .notNull(),
+});
 
 /**
  * Contact Info - emails, phone numbers, WhatsApp numbers
@@ -40,6 +62,8 @@ export const organizationGoals = pgTable("organization_goals", {
     titleAr: text("title_ar").notNull(),
     descriptionEn: text("description_en"),
     descriptionAr: text("description_ar"),
+    icon: text("icon"), // Icon name from lucide-react or custom SVG
+    sortOrder: integer("sort_order").default(0).notNull(),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at")
         .defaultNow()
@@ -56,6 +80,8 @@ export const workPrinciples = pgTable("work_principles", {
     titleAr: text("title_ar").notNull(),
     descriptionEn: text("description_en"),
     descriptionAr: text("description_ar"),
+    icon: text("icon"),
+    sortOrder: integer("sort_order").default(0).notNull(),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at")
         .defaultNow()
@@ -72,6 +98,8 @@ export const generalPolicies = pgTable("general_policies", {
     titleAr: text("title_ar").notNull(),
     descriptionEn: text("description_en"),
     descriptionAr: text("description_ar"),
+    icon: text("icon"),
+    sortOrder: integer("sort_order").default(0).notNull(),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at")
         .defaultNow()
@@ -88,6 +116,8 @@ export const visions = pgTable("visions", {
     titleAr: text("title_ar").notNull(),
     descriptionEn: text("description_en"),
     descriptionAr: text("description_ar"),
+    icon: text("icon"),
+    sortOrder: integer("sort_order").default(0).notNull(),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at")
         .defaultNow()
@@ -104,6 +134,8 @@ export const missions = pgTable("missions", {
     titleAr: text("title_ar").notNull(),
     descriptionEn: text("description_en"),
     descriptionAr: text("description_ar"),
+    icon: text("icon"),
+    sortOrder: integer("sort_order").default(0).notNull(),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at")
         .defaultNow()
@@ -120,6 +152,8 @@ export const companyValues = pgTable("company_values", {
     titleAr: text("title_ar").notNull(),
     descriptionEn: text("description_en"),
     descriptionAr: text("description_ar"),
+    icon: text("icon"),
+    sortOrder: integer("sort_order").default(0).notNull(),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at")
         .defaultNow()
@@ -128,7 +162,7 @@ export const companyValues = pgTable("company_values", {
 });
 
 /**
- * Strengths (القوة)
+ * Strengths (نقاط القوة)
  */
 export const strengths = pgTable("strengths", {
     id: text("id").primaryKey(),
@@ -136,6 +170,8 @@ export const strengths = pgTable("strengths", {
     titleAr: text("title_ar").notNull(),
     descriptionEn: text("description_en"),
     descriptionAr: text("description_ar"),
+    icon: text("icon"), // Icon name e.g., 'shield', 'trophy', 'star'
+    sortOrder: integer("sort_order").default(0).notNull(),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at")
         .defaultNow()
@@ -144,7 +180,7 @@ export const strengths = pgTable("strengths", {
 });
 
 /**
- * Experience (الخبرة)
+ * Experience (الخبرات)
  */
 export const experiences = pgTable("experiences", {
     id: text("id").primaryKey(),
@@ -152,6 +188,9 @@ export const experiences = pgTable("experiences", {
     titleAr: text("title_ar").notNull(),
     descriptionEn: text("description_en"),
     descriptionAr: text("description_ar"),
+    icon: text("icon"),
+    yearsCount: integer("years_count"), // e.g., 20 years
+    sortOrder: integer("sort_order").default(0).notNull(),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at")
         .defaultNow()
@@ -160,7 +199,7 @@ export const experiences = pgTable("experiences", {
 });
 
 /**
- * Commitment (الالتزام)
+ * Commitment (الالتزامات)
  */
 export const commitments = pgTable("commitments", {
     id: text("id").primaryKey(),
@@ -168,9 +207,12 @@ export const commitments = pgTable("commitments", {
     titleAr: text("title_ar").notNull(),
     descriptionEn: text("description_en"),
     descriptionAr: text("description_ar"),
+    icon: text("icon"),
+    sortOrder: integer("sort_order").default(0).notNull(),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at")
         .defaultNow()
         .$onUpdate(() => new Date())
         .notNull(),
 });
+
