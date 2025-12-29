@@ -20,7 +20,8 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import { Loader2, Save } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Loader2, Save, Star } from "lucide-react";
 import { toast } from "sonner";
 import {
     createProject,
@@ -61,6 +62,8 @@ export default function ProjectForm({
         projectStatusId: existingProject?.projectStatusId || "",
         mainImageId: existingProject?.mainImageId || null as string | null,
         imageIds: existingProject?.images.map((img) => img.id) || ([] as string[]),
+        isHighlighted: existingProject?.isHighlighted || false,
+        sortOrder: existingProject?.sortOrder?.toString() || "0",
     });
 
     const generateSlug = (title: string, isArabic: boolean) => {
@@ -96,6 +99,8 @@ export default function ProjectForm({
             year: formData.year ? parseInt(formData.year) : null,
             projectTypeId: formData.projectTypeId || null,
             projectStatusId: formData.projectStatusId || null,
+            isHighlighted: formData.isHighlighted,
+            sortOrder: parseInt(formData.sortOrder) || 0,
         };
 
         let result;
@@ -324,6 +329,40 @@ export default function ProjectForm({
                                 rows={4}
                                 placeholder="وصف المشروع..."
                             />
+                        </div>
+
+                        {/* Highlight Settings */}
+                        <div className="pt-4 border-t">
+                            <div className="flex flex-wrap items-center gap-6">
+                                <div className="flex items-center gap-3">
+                                    <Checkbox
+                                        id="isHighlighted"
+                                        checked={formData.isHighlighted}
+                                        onCheckedChange={(checked: boolean) =>
+                                            setFormData({ ...formData, isHighlighted: checked })
+                                        }
+                                    />
+                                    <Label htmlFor="isHighlighted" className="flex items-center gap-2 cursor-pointer">
+                                        <Star className="h-4 w-4 text-amber-500" />
+                                        {locale === "ar" ? "عرض في الصفحة الرئيسية" : "Show on Homepage"}
+                                    </Label>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <Label htmlFor="sortOrder">
+                                        {locale === "ar" ? "ترتيب العرض" : "Display Order"}
+                                    </Label>
+                                    <Input
+                                        id="sortOrder"
+                                        type="number"
+                                        value={formData.sortOrder}
+                                        onChange={(e) =>
+                                            setFormData({ ...formData, sortOrder: e.target.value })
+                                        }
+                                        className="w-20"
+                                        min="0"
+                                    />
+                                </div>
+                            </div>
                         </div>
                     </CardContent>
                 </Card>

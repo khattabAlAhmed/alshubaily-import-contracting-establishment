@@ -1,4 +1,4 @@
-import { pgTable, text, timestamp, integer, primaryKey } from "drizzle-orm/pg-core";
+import { pgTable, text, timestamp, integer, primaryKey, boolean } from "drizzle-orm/pg-core";
 import { images } from "./images-schema";
 
 /**
@@ -49,6 +49,8 @@ export const projects = pgTable("projects", {
     projectStatusId: text("project_status_id").references(() => projectStatuses.id, { onDelete: "set null" }),
     slugEn: text("slug_en").notNull().unique(),
     slugAr: text("slug_ar").notNull().unique(),
+    isHighlighted: boolean("is_highlighted").default(false).notNull(),
+    sortOrder: integer("sort_order").default(0).notNull(),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at")
         .defaultNow()

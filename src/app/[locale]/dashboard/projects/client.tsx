@@ -86,6 +86,17 @@ export default function ProjectsClient({ projects, types, statuses }: ProjectsCl
             labelAr: "السنة",
             render: (item) => item.year || "-",
         },
+        {
+            key: "isHighlighted",
+            labelEn: "Featured",
+            labelAr: "مميز",
+            className: "w-20 text-center",
+            render: (item) => item.isHighlighted ? (
+                <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-amber-100 text-amber-600">
+                    ★
+                </span>
+            ) : "-",
+        },
     ];
 
     const actions: DataTableAction<ProjectWithRelations>[] = [

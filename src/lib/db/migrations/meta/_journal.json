@@ -29,6 +29,13 @@
       "when": 1767011008563,
       "tag": "0003_regular_loners",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1767016075956,
+      "tag": "0004_mature_sinister_six",
+      "breakpoints": true
     }
   ]
 }

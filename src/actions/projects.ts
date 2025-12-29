@@ -167,6 +167,8 @@ export async function getAllProjects(): Promise<ProjectWithRelations[]> {
             projectStatusId: projects.projectStatusId,
             slugEn: projects.slugEn,
             slugAr: projects.slugAr,
+            isHighlighted: projects.isHighlighted,
+            sortOrder: projects.sortOrder,
             createdAt: projects.createdAt,
             updatedAt: projects.updatedAt,
             projectType: {
@@ -188,7 +190,71 @@ export async function getAllProjects(): Promise<ProjectWithRelations[]> {
         .leftJoin(projectTypes, eq(projects.projectTypeId, projectTypes.id))
         .leftJoin(projectStatuses, eq(projects.projectStatusId, projectStatuses.id))
         .leftJoin(images, eq(projects.mainImageId, images.id))
-        .orderBy(projects.createdAt);
+        .orderBy(projects.sortOrder, projects.createdAt);
+
+    const projectsWithImages: ProjectWithRelations[] = await Promise.all(
+        result.map(async (p) => {
+            const projectImgs = await db
+                .select({ id: images.id, url: images.url })
+                .from(projectImages)
+                .innerJoin(images, eq(projectImages.imageId, images.id))
+                .where(eq(projectImages.projectId, p.id));
+
+            return {
+                ...p,
+                projectType: p.projectType?.id ? p.projectType : null,
+                projectStatus: p.projectStatus?.id ? p.projectStatus : null,
+                mainImage: p.mainImage?.id ? p.mainImage : null,
+                images: projectImgs,
+            };
+        })
+    );
+
+    return projectsWithImages;
+}
+
+export async function getHighlightedProjects(limit: number = 6): Promise<ProjectWithRelations[]> {
+    const result = await db
+        .select({
+            id: projects.id,
+            titleEn: projects.titleEn,
+            titleAr: projects.titleAr,
+            mainImageId: projects.mainImageId,
+            descriptionEn: projects.descriptionEn,
+            descriptionAr: projects.descriptionAr,
+            locationEn: projects.locationEn,
+            locationAr: projects.locationAr,
+            year: projects.year,
+            projectTypeId: projects.projectTypeId,
+            projectStatusId: projects.projectStatusId,
+            slugEn: projects.slugEn,
+            slugAr: projects.slugAr,
+            isHighlighted: projects.isHighlighted,
+            sortOrder: projects.sortOrder,
+            createdAt: projects.createdAt,
+            updatedAt: projects.updatedAt,
+            projectType: {
+                id: projectTypes.id,
+                titleEn: projectTypes.titleEn,
+                titleAr: projectTypes.titleAr,
+            },
+            projectStatus: {
+                id: projectStatuses.id,
+                titleEn: projectStatuses.titleEn,
+                titleAr: projectStatuses.titleAr,
+            },
+            mainImage: {
+                id: images.id,
+                url: images.url,
+            },
+        })
+        .from(projects)
+        .leftJoin(projectTypes, eq(projects.projectTypeId, projectTypes.id))
+        .leftJoin(projectStatuses, eq(projects.projectStatusId, projectStatuses.id))
+        .leftJoin(images, eq(projects.mainImageId, images.id))
+        .where(eq(projects.isHighlighted, true))
+        .orderBy(projects.sortOrder)
+        .limit(limit);
 
     const projectsWithImages: ProjectWithRelations[] = await Promise.all(
         result.map(async (p) => {
@@ -227,6 +293,8 @@ export async function getProjectById(id: string): Promise<ProjectWithRelations |
             projectStatusId: projects.projectStatusId,
             slugEn: projects.slugEn,
             slugAr: projects.slugAr,
+            isHighlighted: projects.isHighlighted,
+            sortOrder: projects.sortOrder,
             createdAt: projects.createdAt,
             updatedAt: projects.updatedAt,
             projectType: {
@@ -284,6 +352,8 @@ export async function createProject(data: {
     projectStatusId?: string | null;
     mainImageId?: string | null;
     imageIds?: string[];
+    isHighlighted?: boolean;
+    sortOrder?: number;
 }): Promise<{ success: boolean; message: string; id?: string }> {
     try {
         const id = nanoid();
@@ -302,6 +372,8 @@ export async function createProject(data: {
             projectTypeId: data.projectTypeId || null,
             projectStatusId: data.projectStatusId || null,
             mainImageId: data.mainImageId || null,
+            isHighlighted: data.isHighlighted || false,
+            sortOrder: data.sortOrder || 0,
         });
 
         if (data.imageIds && data.imageIds.length > 0) {
@@ -335,6 +407,8 @@ export async function updateProject(
         projectStatusId?: string | null;
         mainImageId?: string | null;
         imageIds?: string[];
+        isHighlighted?: boolean;
+        sortOrder?: number;
     }
 ): Promise<{ success: boolean; message: string }> {
     try {
@@ -351,6 +425,8 @@ export async function updateProject(
             projectTypeId: data.projectTypeId || null,
             projectStatusId: data.projectStatusId || null,
             mainImageId: data.mainImageId || null,
+            isHighlighted: data.isHighlighted ?? false,
+            sortOrder: data.sortOrder ?? 0,
         }).where(eq(projects.id, id));
 
         // Update project images
