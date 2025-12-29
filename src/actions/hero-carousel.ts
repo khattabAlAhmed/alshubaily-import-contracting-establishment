@@ -534,3 +534,265 @@ export async function getAvailableContentForSlides(): Promise<AvailableContent> 
         projects: projectsList,
     };
 }
+
+// ==================== Display Helpers ====================
+
+import type { DisplaySlide, SlideReference } from "@/types/hero-carousel";
+import { articleCategories } from "@/lib/db/schema/blog-schema";
+import { productCategories } from "@/lib/db/schema/products-schema";
+import { projectTypes } from "@/lib/db/schema/projects-schema";
+
+/**
+ * Get slides ready for display in the carousel
+ * Fetches all reference data and images from related entities
+ */
+export async function getSlidesForDisplayBySection(sectionId: string): Promise<DisplaySlide[]> {
+    // Get base slides with background images
+    const baseSlides = await db
+        .select({
+            id: heroSlides.id,
+            slideType: heroSlides.slideType,
+            titleEn: heroSlides.titleEn,
+            titleAr: heroSlides.titleAr,
+            subtitleEn: heroSlides.subtitleEn,
+            subtitleAr: heroSlides.subtitleAr,
+            ctaEnabled: heroSlides.ctaEnabled,
+            ctaTextEn: heroSlides.ctaTextEn,
+            ctaTextAr: heroSlides.ctaTextAr,
+            ctaHref: heroSlides.ctaHref,
+            backgroundImageId: heroSlides.backgroundImageId,
+            backgroundColor: heroSlides.backgroundColor,
+            overlayOpacity: heroSlides.overlayOpacity,
+            sortOrder: heroSlides.sortOrder,
+            isActive: heroSlides.isActive,
+            // Reference IDs
+            articleId: heroSlides.articleId,
+            productId: heroSlides.productId,
+            mainServiceId: heroSlides.mainServiceId,
+            importServiceId: heroSlides.importServiceId,
+            contractingServiceId: heroSlides.contractingServiceId,
+            projectId: heroSlides.projectId,
+            // Background image URL
+            backgroundImageUrl: images.url,
+        })
+        .from(heroSlides)
+        .leftJoin(images, eq(heroSlides.backgroundImageId, images.id))
+        .where(eq(heroSlides.heroSectionId, sectionId))
+        .orderBy(asc(heroSlides.sortOrder));
+
+    // Filter active slides
+    const activeSlides = baseSlides.filter(s => s.isActive);
+
+    // Build display slides with reference data
+    const displaySlides: DisplaySlide[] = await Promise.all(
+        activeSlides.map(async (slide) => {
+            let reference: SlideReference | null = null;
+
+            // Fetch reference data based on slide type
+            switch (slide.slideType) {
+                case "article":
+                    if (slide.articleId) {
+                        const articleData = await db
+                            .select({
+                                id: articles.id,
+                                titleEn: articles.titleEn,
+                                titleAr: articles.titleAr,
+                                slugEn: articles.slugEn,
+                                slugAr: articles.slugAr,
+                                publishedAt: articles.publishedAt,
+                                imageUrl: images.url,
+                                categoryName: articleCategories.titleEn,
+                            })
+                            .from(articles)
+                            .leftJoin(images, eq(articles.mainImageId, images.id))
+                            .leftJoin(articleCategories, eq(articles.categoryId, articleCategories.id))
+                            .where(eq(articles.id, slide.articleId))
+                            .limit(1);
+                        if (articleData[0]) {
+                            reference = {
+                                ...articleData[0],
+                                categoryName: articleData[0].categoryName,
+                                publishedAt: articleData[0].publishedAt,
+                            };
+                        }
+                    }
+                    break;
+
+                case "product":
+                    if (slide.productId) {
+                        const productData = await db
+                            .select({
+                                id: products.id,
+                                titleEn: products.titleEn,
+                                titleAr: products.titleAr,
+                                slugEn: products.slugEn,
+                                slugAr: products.slugAr,
+                                descriptionEn: products.descriptionEn,
+                                descriptionAr: products.descriptionAr,
+                                imageUrl: images.url,
+                                productCategoryName: productCategories.titleEn,
+                            })
+                            .from(products)
+                            .leftJoin(images, eq(products.mainImageId, images.id))
+                            .leftJoin(productCategories, eq(products.categoryId, productCategories.id))
+                            .where(eq(products.id, slide.productId))
+                            .limit(1);
+                        if (productData[0]) {
+                            reference = {
+                                ...productData[0],
+                                productCategoryName: productData[0].productCategoryName,
+                            };
+                        }
+                    }
+                    break;
+
+                case "main_service":
+                    if (slide.mainServiceId) {
+                        const serviceData = await db
+                            .select({
+                                id: mainServices.id,
+                                titleEn: mainServices.titleEn,
+                                titleAr: mainServices.titleAr,
+                                slugEn: mainServices.slugEn,
+                                slugAr: mainServices.slugAr,
+                                descriptionEn: mainServices.descriptionEn,
+                                descriptionAr: mainServices.descriptionAr,
+                                imageUrl: images.url,
+                            })
+                            .from(mainServices)
+                            .leftJoin(images, eq(mainServices.mainImageId, images.id))
+                            .where(eq(mainServices.id, slide.mainServiceId))
+                            .limit(1);
+                        if (serviceData[0]) {
+                            reference = serviceData[0];
+                        }
+                    }
+                    break;
+
+                case "import_service":
+                    if (slide.importServiceId) {
+                        const serviceData = await db
+                            .select({
+                                id: importServices.id,
+                                titleEn: importServices.titleEn,
+                                titleAr: importServices.titleAr,
+                                slugEn: importServices.slugEn,
+                                slugAr: importServices.slugAr,
+                                descriptionEn: importServices.descriptionEn,
+                                descriptionAr: importServices.descriptionAr,
+                                imageUrl: images.url,
+                            })
+                            .from(importServices)
+                            .leftJoin(images, eq(importServices.mainImageId, images.id))
+                            .where(eq(importServices.id, slide.importServiceId))
+                            .limit(1);
+                        if (serviceData[0]) {
+                            reference = serviceData[0];
+                        }
+                    }
+                    break;
+
+                case "contracting_service":
+                    if (slide.contractingServiceId) {
+                        const serviceData = await db
+                            .select({
+                                id: contractingServices.id,
+                                titleEn: contractingServices.titleEn,
+                                titleAr: contractingServices.titleAr,
+                                slugEn: contractingServices.slugEn,
+                                slugAr: contractingServices.slugAr,
+                                descriptionEn: contractingServices.descriptionEn,
+                                descriptionAr: contractingServices.descriptionAr,
+                                imageUrl: images.url,
+                            })
+                            .from(contractingServices)
+                            .leftJoin(images, eq(contractingServices.mainImageId, images.id))
+                            .where(eq(contractingServices.id, slide.contractingServiceId))
+                            .limit(1);
+                        if (serviceData[0]) {
+                            reference = serviceData[0];
+                        }
+                    }
+                    break;
+
+                case "project":
+                    if (slide.projectId) {
+                        const projectData = await db
+                            .select({
+                                id: projects.id,
+                                titleEn: projects.titleEn,
+                                titleAr: projects.titleAr,
+                                slugEn: projects.slugEn,
+                                slugAr: projects.slugAr,
+                                descriptionEn: projects.descriptionEn,
+                                descriptionAr: projects.descriptionAr,
+                                locationEn: projects.locationEn,
+                                locationAr: projects.locationAr,
+                                year: projects.year,
+                                imageUrl: images.url,
+                                projectTypeName: projectTypes.titleEn,
+                            })
+                            .from(projects)
+                            .leftJoin(images, eq(projects.mainImageId, images.id))
+                            .leftJoin(projectTypes, eq(projects.projectTypeId, projectTypes.id))
+                            .where(eq(projects.id, slide.projectId))
+                            .limit(1);
+                        if (projectData[0]) {
+                            reference = {
+                                ...projectData[0],
+                                locationEn: projectData[0].locationEn,
+                                locationAr: projectData[0].locationAr,
+                                year: projectData[0].year,
+                                projectTypeName: projectData[0].projectTypeName,
+                            };
+                        }
+                    }
+                    break;
+            }
+
+            return {
+                id: slide.id,
+                slideType: slide.slideType,
+                titleEn: slide.titleEn,
+                titleAr: slide.titleAr,
+                subtitleEn: slide.subtitleEn,
+                subtitleAr: slide.subtitleAr,
+                ctaEnabled: slide.ctaEnabled,
+                ctaTextEn: slide.ctaTextEn,
+                ctaTextAr: slide.ctaTextAr,
+                ctaHref: slide.ctaHref,
+                backgroundImageUrl: slide.backgroundImageUrl,
+                backgroundColor: slide.backgroundColor,
+                overlayOpacity: slide.overlayOpacity,
+                reference,
+                sortOrder: slide.sortOrder,
+            };
+        })
+    );
+
+    return displaySlides;
+}
+
+/**
+ * Get the hero section by slug
+ */
+export async function getHeroSectionBySlug(slug: string): Promise<HeroSection | null> {
+    const result = await db
+        .select()
+        .from(heroSections)
+        .where(eq(heroSections.slugEn, slug))
+        .limit(1);
+
+    if (result.length === 0) {
+        // Try Arabic slug
+        const arResult = await db
+            .select()
+            .from(heroSections)
+            .where(eq(heroSections.slugAr, slug))
+            .limit(1);
+        return arResult.length > 0 ? arResult[0] : null;
+    }
+
+    return result[0];
+}
+
