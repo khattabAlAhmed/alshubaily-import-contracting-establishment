@@ -11,8 +11,8 @@ export default function Home() {
       <main>
         <HeroSection />
         <WhoWeAreSection />
-        <WhyUsSection />
         <PartnersSection />
+        <WhyUsSection />
         <ProjectsShowcaseSection />
         <ContactSection />
       </main>

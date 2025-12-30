@@ -120,3 +120,14 @@ export async function deletePartner(id: string): Promise<{ success: boolean; mes
         return { success: false, message: "Failed to delete partner" };
     }
 }
+
+import { unstable_cache } from "next/cache";
+
+/**
+ * Cached version of getAllPartners - caches for 60 seconds
+ */
+export const getCachedAllPartners = unstable_cache(
+    getAllPartners,
+    ["all-partners"],
+    { revalidate: 60, tags: ["partners"] }
+);

@@ -8,7 +8,7 @@ import {
     projectImages,
 } from "@/lib/db/schema/projects-schema";
 import { images } from "@/lib/db/schema/images-schema";
-import { eq } from "drizzle-orm";
+import { eq, inArray } from "drizzle-orm";
 import { nanoid } from "nanoid";
 
 // ==================== Types ====================
@@ -214,6 +214,7 @@ export async function getAllProjects(): Promise<ProjectWithRelations[]> {
 }
 
 export async function getHighlightedProjects(limit: number = 6): Promise<ProjectWithRelations[]> {
+    // Fetch projects with main image in a single query
     const result = await db
         .select({
             id: projects.id,
@@ -256,23 +257,38 @@ export async function getHighlightedProjects(limit: number = 6): Promise<Project
         .orderBy(projects.sortOrder)
         .limit(limit);
 
-    const projectsWithImages: ProjectWithRelations[] = await Promise.all(
-        result.map(async (p) => {
-            const projectImgs = await db
-                .select({ id: images.id, url: images.url })
-                .from(projectImages)
-                .innerJoin(images, eq(projectImages.imageId, images.id))
-                .where(eq(projectImages.projectId, p.id));
+    if (result.length === 0) {
+        return [];
+    }
 
-            return {
-                ...p,
-                projectType: p.projectType?.id ? p.projectType : null,
-                projectStatus: p.projectStatus?.id ? p.projectStatus : null,
-                mainImage: p.mainImage?.id ? p.mainImage : null,
-                images: projectImgs,
-            };
+    // OPTIMIZED: Batch fetch all project images in a single query
+    const projectIds = result.map(p => p.id);
+    const allProjectImages = await db
+        .select({
+            projectId: projectImages.projectId,
+            id: images.id,
+            url: images.url
         })
-    );
+        .from(projectImages)
+        .innerJoin(images, eq(projectImages.imageId, images.id))
+        .where(inArray(projectImages.projectId, projectIds));
+
+    // Create a Map for O(1) lookup of images by project ID
+    const imagesByProject = new Map<string, { id: string; url: string }[]>();
+    allProjectImages.forEach(img => {
+        const existing = imagesByProject.get(img.projectId) || [];
+        existing.push({ id: img.id, url: img.url });
+        imagesByProject.set(img.projectId, existing);
+    });
+
+    // Build the result using the map (no additional queries)
+    const projectsWithImages: ProjectWithRelations[] = result.map(p => ({
+        ...p,
+        projectType: p.projectType?.id ? p.projectType : null,
+        projectStatus: p.projectStatus?.id ? p.projectStatus : null,
+        mainImage: p.mainImage?.id ? p.mainImage : null,
+        images: imagesByProject.get(p.id) || [],
+    }));
 
     return projectsWithImages;
 }
@@ -456,3 +472,14 @@ export async function deleteProject(id: string): Promise<{ success: boolean; mes
         return { success: false, message: "Failed to delete project" };
     }
 }
+
+import { unstable_cache } from "next/cache";
+
+/**
+ * Cached version of getHighlightedProjects - caches for 60 seconds
+ */
+export const getCachedHighlightedProjects = unstable_cache(
+    getHighlightedProjects,
+    ["highlighted-projects"],
+    { revalidate: 60, tags: ["highlighted-projects"] }
+);

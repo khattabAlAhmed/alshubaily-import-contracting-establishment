@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import { getLocale } from "next-intl/server";
-import { getAllStrengths, getAllExperiences, getAllCommitments } from "@/actions/website-info";
+import { getCachedStrengths, getCachedExperiences, getCachedCommitments } from "@/actions/website-info";
 import { SectionSkeleton } from "./SectionSkeletons";
 import { WhyUsContent } from "./WhyUsContent";
 
@@ -9,9 +9,9 @@ async function WhyUsData() {
     const isArabic = locale === "ar";
 
     const [strengths, experiences, commitments] = await Promise.all([
-        getAllStrengths(),
-        getAllExperiences(),
-        getAllCommitments(),
+        getCachedStrengths(),
+        getCachedExperiences(),
+        getCachedCommitments(),
     ]);
 
     return (

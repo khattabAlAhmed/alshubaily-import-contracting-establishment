@@ -2,14 +2,13 @@ import { Suspense } from "react";
 import { getLocale } from "next-intl/server";
 import { HeroCarousel } from "@/components/hero/HeroCarousel";
 import { HeroCarouselSkeleton } from "@/components/hero/HeroCarouselSkeleton";
-import { getSlidesForDisplayBySection, getHeroSectionBySlug } from "@/actions/hero-carousel";
+import { getCachedSlidesForDisplay, getCachedHeroSectionBySlug } from "@/actions/hero-carousel";
 
 async function HeroCarouselContent() {
     const locale = await getLocale();
 
-    // Get the main homepage hero section
-    // You can change this slug to match your hero section
-    const heroSection = await getHeroSectionBySlug("homepage");
+    // Get the main homepage hero section (cached)
+    const heroSection = await getCachedHeroSectionBySlug("homepage");
 
     if (!heroSection) {
         // Return empty state if no hero section found
@@ -22,7 +21,8 @@ async function HeroCarouselContent() {
         );
     }
 
-    const slides = await getSlidesForDisplayBySection(heroSection.id);
+    // Get slides (cached + batched queries)
+    const slides = await getCachedSlidesForDisplay(heroSection.id);
 
     return <HeroCarousel slides={slides} locale={locale} autoPlayInterval={5000} />;
 }

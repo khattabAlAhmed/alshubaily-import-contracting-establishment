@@ -1,12 +1,12 @@
 import { Suspense } from "react";
 import { getLocale } from "next-intl/server";
-import { getHighlightedProjects } from "@/actions/projects";
+import { getCachedHighlightedProjects } from "@/actions/projects";
 import { ProjectsShowcaseContent } from "./ProjectsShowcaseContent";
 import { ProjectsShowcaseSkeleton } from "./ProjectsShowcaseSkeleton";
 
 async function ProjectsData() {
     const locale = await getLocale();
-    const projects = await getHighlightedProjects(6);
+    const projects = await getCachedHighlightedProjects(6);
 
     return <ProjectsShowcaseContent projects={projects} locale={locale} />;
 }

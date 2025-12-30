@@ -3,6 +3,7 @@
 import { useRef, useEffect } from "react";
 import { useLocale } from "next-intl";
 import Link from "next/link";
+import Image from "next/image";
 import { gsap } from "gsap";
 import {
     Phone,
@@ -101,9 +102,20 @@ export function FooterClient({ data, contactInfo, socialLinks }: FooterClientPro
                     {/* Brand Column */}
                     <div className="footer-animate lg:col-span-1">
                         <Link href={`/${locale}`} className="inline-flex items-center gap-3 mb-6 group">
-                            <div className="w-12 h-12 rounded-xl bg-primary flex items-center justify-center text-primary-foreground font-bold text-xl transition-transform group-hover:scale-105">
-                                ش
-                            </div>
+                            {data.logoUrl ? (
+                                <div className="w-12 h-12 relative rounded-xl overflow-hidden transition-transform group-hover:scale-105">
+                                    <Image
+                                        src={data.logoUrl}
+                                        alt={companyName}
+                                        fill
+                                        className="object-contain"
+                                    />
+                                </div>
+                            ) : (
+                                <div className="w-12 h-12 rounded-xl bg-primary flex items-center justify-center text-primary-foreground font-bold text-xl transition-transform group-hover:scale-105">
+                                    ش
+                                </div>
+                            )}
                             <span className="text-xl font-bold">{isArabic ? "الشبيلي" : "Alshubaily"}</span>
                         </Link>
                         <p className="text-background/70 text-sm leading-relaxed mb-6">

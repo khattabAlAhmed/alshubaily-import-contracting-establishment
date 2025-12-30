@@ -1,14 +1,14 @@
 import { Suspense } from "react";
-import { getHeaderData } from "@/actions/header";
-import { getAllContactInfo, getAllSocialMedia } from "@/actions/website-info";
+import { getCachedHeaderData } from "@/actions/header";
+import { getCachedContactInfo, getCachedSocialMedia } from "@/actions/website-info";
 import { FooterClient } from "./footer/FooterClient";
 import { Skeleton } from "@/components/ui/skeleton";
 
 async function FooterData() {
     const [headerData, contactInfo, socialLinks] = await Promise.all([
-        getHeaderData(),
-        getAllContactInfo(),
-        getAllSocialMedia(),
+        getCachedHeaderData(),
+        getCachedContactInfo(),
+        getCachedSocialMedia(),
     ]);
 
     return (

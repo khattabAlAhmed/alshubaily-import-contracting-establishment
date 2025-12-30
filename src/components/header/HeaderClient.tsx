@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useLocale } from "next-intl";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { gsap } from "gsap";
 import {
@@ -100,9 +101,21 @@ export function HeaderClient({ data }: HeaderClientProps) {
                     <div className="flex items-center justify-between h-16 md:h-20">
                         {/* Logo */}
                         <Link href={`/${locale}`} className="flex items-center gap-3 group">
-                            <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-primary flex items-center justify-center text-primary-foreground font-bold text-lg transition-transform group-hover:scale-105">
-                                ش
-                            </div>
+                            {data.logoUrl ? (
+                                <div className="w-10 h-10 md:w-12 md:h-12 relative rounded-xl overflow-hidden transition-transform group-hover:scale-105">
+                                    <Image
+                                        src={data.logoUrl}
+                                        alt={companyName}
+                                        fill
+                                        className="object-contain"
+                                        priority
+                                    />
+                                </div>
+                            ) : (
+                                <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-primary flex items-center justify-center text-primary-foreground font-bold text-lg transition-transform group-hover:scale-105">
+                                    ش
+                                </div>
+                            )}
                             <div className="hidden sm:block">
                                 <span className="text-lg md:text-xl font-bold text-foreground">
                                     {companyName}

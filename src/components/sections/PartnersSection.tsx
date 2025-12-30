@@ -1,12 +1,12 @@
 import { Suspense } from "react";
 import { getLocale } from "next-intl/server";
-import { getAllPartners } from "@/actions/partners";
+import { getCachedAllPartners } from "@/actions/partners";
 import { PartnersContent } from "./PartnersContent";
 import { PartnersSkeleton } from "./PartnersSkeleton";
 
 async function PartnersData() {
     const locale = await getLocale();
-    const partners = await getAllPartners();
+    const partners = await getCachedAllPartners();
 
     return <PartnersContent partners={partners} locale={locale} />;
 }

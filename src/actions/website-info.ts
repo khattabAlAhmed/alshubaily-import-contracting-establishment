@@ -538,3 +538,70 @@ export async function deleteCommitment(id: string): Promise<{ success: boolean; 
         return { success: false, message: "Failed to delete commitment" };
     }
 }
+
+// ==================== Cached Versions for Page Performance ====================
+
+import { unstable_cache } from "next/cache";
+
+/** Cached company profile - 60 second TTL */
+export const getCachedCompanyProfile = unstable_cache(
+    getCompanyProfile,
+    ["company-profile"],
+    { revalidate: 60, tags: ["company-profile"] }
+);
+
+/** Cached contact info - 60 second TTL */
+export const getCachedContactInfo = unstable_cache(
+    getAllContactInfo,
+    ["contact-info"],
+    { revalidate: 60, tags: ["contact-info"] }
+);
+
+/** Cached social media - 60 second TTL */
+export const getCachedSocialMedia = unstable_cache(
+    getAllSocialMedia,
+    ["social-media"],
+    { revalidate: 60, tags: ["social-media"] }
+);
+
+/** Cached visions - 60 second TTL */
+export const getCachedVisions = unstable_cache(
+    getAllVisions,
+    ["visions"],
+    { revalidate: 60, tags: ["visions"] }
+);
+
+/** Cached missions - 60 second TTL */
+export const getCachedMissions = unstable_cache(
+    getAllMissions,
+    ["missions"],
+    { revalidate: 60, tags: ["missions"] }
+);
+
+/** Cached company values - 60 second TTL */
+export const getCachedCompanyValues = unstable_cache(
+    getAllCompanyValues,
+    ["company-values"],
+    { revalidate: 60, tags: ["company-values"] }
+);
+
+/** Cached strengths - 60 second TTL */
+export const getCachedStrengths = unstable_cache(
+    getAllStrengths,
+    ["strengths"],
+    { revalidate: 60, tags: ["strengths"] }
+);
+
+/** Cached experiences - 60 second TTL */
+export const getCachedExperiences = unstable_cache(
+    getAllExperiences,
+    ["experiences"],
+    { revalidate: 60, tags: ["experiences"] }
+);
+
+/** Cached commitments - 60 second TTL */
+export const getCachedCommitments = unstable_cache(
+    getAllCommitments,
+    ["commitments"],
+    { revalidate: 60, tags: ["commitments"] }
+);

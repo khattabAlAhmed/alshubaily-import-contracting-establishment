@@ -34,6 +34,7 @@ export interface HeaderServiceData {
 export interface HeaderData {
     services: HeaderServiceData;
     companyName: { en: string; ar: string } | null;
+    logoUrl: string | null;
     primaryPhone: string | null;
     primaryWhatsApp: string | null;
 }
@@ -80,7 +81,19 @@ export async function getHeaderData(): Promise<HeaderData> {
         companyName: companyProfile
             ? { en: companyProfile.nameEn, ar: companyProfile.nameAr }
             : null,
+        logoUrl: companyProfile?.logoImageUrl || null,
         primaryPhone,
         primaryWhatsApp,
     };
 }
+
+import { unstable_cache } from "next/cache";
+
+/**
+ * Cached version of getHeaderData - caches for 60 seconds
+ */
+export const getCachedHeaderData = unstable_cache(
+    getHeaderData,
+    ["header-data"],
+    { revalidate: 60, tags: ["header-data"] }
+);

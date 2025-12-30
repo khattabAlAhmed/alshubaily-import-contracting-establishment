@@ -1,7 +1,6 @@
 import { Suspense } from "react";
 import { getLocale } from "next-intl/server";
-import { getCompanyProfile } from "@/actions/website-info";
-import { getAllVisions, getAllMissions, getAllCompanyValues } from "@/actions/website-info";
+import { getCachedCompanyProfile, getCachedVisions, getCachedMissions, getCachedCompanyValues } from "@/actions/website-info";
 import { WhoWeAreSkeleton } from "./SectionSkeletons";
 import { WhoWeAreContent } from "./WhoWeAreContent";
 
@@ -10,10 +9,10 @@ async function WhoWeAreData() {
     const isArabic = locale === "ar";
 
     const [profile, visions, missions, values] = await Promise.all([
-        getCompanyProfile(),
-        getAllVisions(),
-        getAllMissions(),
-        getAllCompanyValues(),
+        getCachedCompanyProfile(),
+        getCachedVisions(),
+        getCachedMissions(),
+        getCachedCompanyValues(),
     ]);
 
     return (

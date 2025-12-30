@@ -1,14 +1,14 @@
 import { Suspense } from "react";
 import { getLocale } from "next-intl/server";
-import { getAllContactInfo, getCompanyProfile } from "@/actions/website-info";
+import { getCachedContactInfo, getCachedCompanyProfile } from "@/actions/website-info";
 import { ContactContent } from "./ContactContent";
 import { ContactSkeleton } from "./ContactSkeleton";
 
 async function ContactData() {
     const locale = await getLocale();
     const [contactInfo, companyProfile] = await Promise.all([
-        getAllContactInfo(),
-        getCompanyProfile(),
+        getCachedContactInfo(),
+        getCachedCompanyProfile(),
     ]);
 
     return (

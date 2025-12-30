@@ -1,10 +1,10 @@
 import { Suspense } from "react";
-import { getHeaderData } from "@/actions/header";
+import { getCachedHeaderData } from "@/actions/header";
 import { HeaderClient } from "./header/HeaderClient";
 import { Skeleton } from "@/components/ui/skeleton";
 
 async function HeaderData() {
-    const data = await getHeaderData();
+    const data = await getCachedHeaderData();
     return <HeaderClient data={data} />;
 }
 
