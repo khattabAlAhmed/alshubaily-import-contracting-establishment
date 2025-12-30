@@ -90,6 +90,18 @@
   --section-accent-strength: oklch(0.55 0.2 145);
   --section-accent-experience: oklch(0.55 0.18 250);
   --section-accent-commitment: oklch(0.55 0.16 30);
+
+  /* Partners Section */
+  --partners-bg: oklch(0.98 0.01 250);
+  --partners-border: oklch(0.9 0.02 250);
+
+  /* Contact Section */
+  --contact-bg: oklch(0.18 0.02 250);
+  --contact-card-bg: oklch(0.22 0.02 250);
+  --contact-accent: oklch(0.6 0.18 200);
+  --contact-whatsapp: oklch(0.55 0.2 145);
+  --contact-phone: oklch(0.55 0.16 30);
+  --contact-email: oklch(0.55 0.18 280);
 }
 
 .dark {
@@ -139,6 +151,18 @@
   --section-accent-strength: oklch(0.7 0.2 145);
   --section-accent-experience: oklch(0.7 0.18 250);
   --section-accent-commitment: oklch(0.7 0.16 30);
+
+  /* Partners Section */
+  --partners-bg: oklch(0.15 0.01 250);
+  --partners-border: oklch(0.25 0.02 250);
+
+  /* Contact Section */
+  --contact-bg: oklch(0.12 0.015 250);
+  --contact-card-bg: oklch(0.18 0.02 250);
+  --contact-accent: oklch(0.7 0.18 200);
+  --contact-whatsapp: oklch(0.7 0.2 145);
+  --contact-phone: oklch(0.7 0.16 30);
+  --contact-email: oklch(0.7 0.18 280);
 }
 
 @layer base {
