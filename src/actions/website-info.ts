@@ -605,3 +605,24 @@ export const getCachedCommitments = unstable_cache(
     ["commitments"],
     { revalidate: 60, tags: ["commitments"] }
 );
+
+/** Cached organization goals - 60 second TTL */
+export const getCachedOrganizationGoals = unstable_cache(
+    getAllOrganizationGoals,
+    ["organization-goals"],
+    { revalidate: 60, tags: ["organization-goals"] }
+);
+
+/** Cached work principles - 60 second TTL */
+export const getCachedWorkPrinciples = unstable_cache(
+    getAllWorkPrinciples,
+    ["work-principles"],
+    { revalidate: 60, tags: ["work-principles"] }
+);
+
+/** Cached general policies - 60 second TTL */
+export const getCachedGeneralPolicies = unstable_cache(
+    getAllGeneralPolicies,
+    ["general-policies"],
+    { revalidate: 60, tags: ["general-policies"] }
+);

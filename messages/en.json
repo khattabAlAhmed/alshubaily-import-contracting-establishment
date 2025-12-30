@@ -221,5 +221,11 @@
             "search": "Search...",
             "noPermission": "You don't have permission to access this page"
         }
+    },
+    "about": {
+        "meta": {
+            "title": "About Us - Alshubaily Establishment",
+            "description": "Learn about our vision, mission, values, and the principles that guide our work"
+        }
     }
 }

@@ -102,6 +102,14 @@
   --contact-whatsapp: oklch(0.55 0.2 145);
   --contact-phone: oklch(0.55 0.16 30);
   --contact-email: oklch(0.55 0.18 280);
+
+  /* About Page */
+  --about-vision: oklch(0.6 0.18 85);
+  --about-mission: oklch(0.55 0.2 200);
+  --about-values: oklch(0.55 0.2 145);
+  --about-goals-bg: oklch(0.96 0.01 250);
+  --about-principles-connector: oklch(0.85 0.05 250);
+  --about-policies-bg: oklch(0.98 0 0);
 }
 
 .dark {
@@ -163,6 +171,14 @@
   --contact-whatsapp: oklch(0.7 0.2 145);
   --contact-phone: oklch(0.7 0.16 30);
   --contact-email: oklch(0.7 0.18 280);
+
+  /* About Page */
+  --about-vision: oklch(0.75 0.18 85);
+  --about-mission: oklch(0.7 0.2 200);
+  --about-values: oklch(0.7 0.2 145);
+  --about-goals-bg: oklch(0.16 0.01 250);
+  --about-principles-connector: oklch(0.3 0.05 250);
+  --about-policies-bg: oklch(0.18 0 0);
 }
 
 @layer base {
